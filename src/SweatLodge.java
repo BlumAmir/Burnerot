@@ -27,12 +27,17 @@ public class SweatLodge {
 
         while(true) {
 
-            // Set colorsRGB for leds
+            // Set colors[i] for Leds -> i is the led number.  ;
             for(int i=0; i<colorsRGB.length; i++) {
-                colorsRGB[i].r = (byte)(loopCounter % 256);
-                colorsRGB[i].b = (byte)0;
+
+                colors[i].hue = ((loopCounter+i) % 256) / 256.0; //0 = red 0.333 =green   0.666 = 7
+                colors[i].brightness = 1.0; //black = 0
+                colors[i].saturation = 1.0; //white = 0
             }
-            colorsRGB[loopCounter % 240].b = (byte)255;
+
+            for(int i=0; i<colors.length; i++) {
+                colorsRGB[i] = colors[i].toRGBColor();
+            }
 
 
             //Send to leds (beaglebone)
@@ -44,7 +49,7 @@ public class SweatLodge {
 
             try {
             //delay 1,000 = 1sec
-                Thread.sleep(30);
+                Thread.sleep(10);
             }
             catch (java.lang.InterruptedException interrupt) {
                 break;
