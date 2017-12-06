@@ -7,6 +7,6 @@ public class MainLocal {
         }
         boolean runSimulator = false;
 
-        MakeEverythingOK.run(soundsPath, runSimulator);
+        SweatLodge.run();
     }
 }
