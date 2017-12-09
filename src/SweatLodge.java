@@ -15,8 +15,8 @@ public class SweatLodge {
         network.configure();
 
 //do only once at the begining//
-        RGBColor colorsRGB[] = new RGBColor[300];
-        HSBColor colors[] = new HSBColor[300];
+        RGBColor colorsRGB[] = new RGBColor[240];
+        HSBColor colors[] = new HSBColor[240];
         for(int i=0; i<colorsRGB.length; i++) {
             colorsRGB[i] = new RGBColor();
             colors[i] = new HSBColor();
@@ -98,47 +98,19 @@ public class SweatLodge {
         double width = 0.0  ; //Decide on the width. if == colorsRGB.length then each the spectrum is spaces perfect.
         width =  (width>0)? width:colorsRGB.length;
 
-int legGroupSize = 5;
-       int counter = 0;
+//int legGroupSize = 5;
+//       int counter = 0;
        while (true) {
-           if(counter>colorsRGB.length) {
-               counter = 0;}
-
-           for (int i = 0; i <colorsRGB.length;) {
-               if (i==counter){
-
-                   for (i=counter ;i<legGroupSize;i++){
-                       if (i<colorsRGB.length) {
-                           colors[i].hue = 1.0;//(bowCounter + i) % width / width;
-                           colors[i].brightness = 1.0;
-                           colors[i].saturation = 1.0;
-System.out.println("RED,  i = "+i+" counter = "+counter);
-                       }else{
-System.out.println("Break, i = "+i+" counter = "+counter);
-                            break;
-
-                       }
-
-                   }
-               }else {
-                   colors[i].hue = 0.6;
-                   colors[i].brightness = 1.0;
-                   colors[i].saturation = 1.0;
-                   //System.out.println("i = "+i) ;
-System.out.println("BLUE,  i = "+i+" counter = "+counter);
-
-                   i++;
-               }
-
-
+           for (int i = 0; i <colorsRGB.length; i++) {
+               colors[i].copyFromOther(HSBColor.RED);
            }
-           counter++;
 
             try {
                 //delay 1,000 = 1sec
-                Thread.sleep(10);        //devide 1000 in the number and you will get how many time the loop would work in a second    -   frame rate
+                Thread.sleep(30);        //devide 1000 in the number and you will get how many time the loop would work in a second    -   frame rate
             }
             catch (java.lang.InterruptedException interrupt) {
+               System.out.println(interrupt.getMessage());
                 break;
             }
 
@@ -149,11 +121,11 @@ System.out.println("BLUE,  i = "+i+" counter = "+counter);
            for(int i=0; i<colors.length; i++) {
                colorsRGB[i] = colors[i].toRGBColor();
            }
-           //System.out.println("ssss");
 
            //Send to leds (beaglebone)
            System.gc();
            network.addSegment("test", colorsRGB, 0, 0);
+           network.addSegment("test", colorsRGB, 2, 0);
 
            network.send();
            /***END****/
