@@ -98,14 +98,45 @@ public class SweatLodge {
         double width = 0.0  ; //Decide on the width. if == colorsRGB.length then each the spectrum is spaces perfect.
         width =  (width>0)? width:colorsRGB.length;
 
+        Wing leftWing = new Wing();
+        Wing rightWing = new Wing();
+
+        ContinuousRainbowEffect rainbow = new ContinuousRainbowEffect(new ContinuousWhiteEffect());
+        ContinuousToDiscrete continuousToDiscrete = new ContinuousToDiscrete(240, rainbow);
+
+        // yellow
+        DiscreteConstColorEffect constYellow = new DiscreteConstColorEffect(240);
+        constYellow.configure(HSBColor.YELLOW);
+
+        // red
+        DiscreteConstColorEffect constRed = new DiscreteConstColorEffect(240);
+        constRed.configure(HSBColor.RED);
+
+        // alternate
+        DiscreteAlternateEffect alternateRedYellow = new DiscreteAlternateEffect(240, constRed, constYellow);
+        DiscreteSpikeEffect spike = new DiscreteSpikeEffect(240, continuousToDiscrete);
+        spike.configure(0, 1.3, 0.3);
+
+        EffectToObjectMapper mapperLeft = new EffectToObjectMapper(spike, leftWing.GetAllPixels(), leftWing.allIndexes);
+        EffectToObjectMapper mapperRight = new EffectToObjectMapper(spike, rightWing.GetAllPixels(), rightWing.allIndexes);
+
 //int legGroupSize = 5;
 //       int counter = 0;
        while (true) {
-           for (int i = 0; i <colorsRGB.length; i++) {
-               colors[i].copyFromOther(HSBColor.RED);
-           }
 
-            try {
+           double timePercent = (System.currentTimeMillis() % 5000) / 5000.0;
+
+           mapperLeft.apply(timePercent);
+           mapperRight.apply(timePercent);
+
+           //Send to leds (beaglebone)
+           System.gc();
+           network.addSegment("test", leftWing.GetRGBColors(0, leftWing.GetPixelsNumber()), 0, 0);
+           network.addSegment("test", rightWing.GetRGBColors(0, rightWing.GetPixelsNumber()), 2, 0);
+
+           network.send();
+
+           try {
                 //delay 1,000 = 1sec
                 Thread.sleep(30);        //devide 1000 in the number and you will get how many time the loop would work in a second    -   frame rate
             }
@@ -117,17 +148,6 @@ public class SweatLodge {
            bowCounter++;
 
 
-           /****SEND TO LED START***/
-           for(int i=0; i<colors.length; i++) {
-               colorsRGB[i] = colors[i].toRGBColor();
-           }
-
-           //Send to leds (beaglebone)
-           System.gc();
-           network.addSegment("test", colorsRGB, 0, 0);
-           network.addSegment("test", colorsRGB, 2, 0);
-
-           network.send();
            /***END****/
 
        }
