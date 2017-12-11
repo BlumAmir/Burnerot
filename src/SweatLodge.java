@@ -1,12 +1,3 @@
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.IOException;
-import java.util.Date;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ThreadLocalRandom;
-
 public class SweatLodge {
 
     public static void run() {
@@ -14,95 +5,15 @@ public class SweatLodge {
         final Network network = new Network();
         network.configure();
 
-//do only once at the begining//
-        RGBColor colorsRGB[] = new RGBColor[240];
-        HSBColor colors[] = new HSBColor[240];
-        for(int i=0; i<colorsRGB.length; i++) {
-            colorsRGB[i] = new RGBColor();
-            colors[i] = new HSBColor();
-        }
-//End INTRO //
-
-
-//---Show rainbow colors once------ START ---//
-//        double countIt=0.0;
-//        for (int i=0; i< colorsRGB.length; i++){
-//            colors[i].hue = countIt;
-//            colors[i].brightness = 1.0;
-//            colors[i].saturation = 1.0;
-//            countIt=countIt+1.0/colorsRGB.length;System.out.println(countIt);
-//        }
-//--- END ---//
-
-////---ONE LE SHOTING STAR CHANGING COLOR - ONLY ONE WAY---- START ---//
-//       double bowCounter = 0.0;
-//
-//        double width = 0.0  ; //Decide on the width. if == colorsRGB.length then each the spectrum is spaces perfect.
-//        width =  (width>0)? width:colorsRGB.length;
-//
-//
-//       int counter = 0;
-//       while (true) {
-//           if(counter>colorsRGB.length) {
-//               counter = 0;}
-//
-//           for (int i = 0; i <colorsRGB.length; i++) {
-//               if (i==counter){
-//                   colors[i].hue = (bowCounter+i)%width/width;
-//                   colors[i].brightness = 1.0;
-//                   colors[i].saturation = 1.0;
-//                System.out.println("yey  "+"i "+i+"bowCounter "+bowCounter+"counter "+counter);
-//
-//               }else {
-//                   colors[i].hue = 0.0;
-//                   colors[i].brightness = 0.0;
-//                   colors[i].saturation = 1.0;
-//                   //System.out.println("i = "+i) ;
-//                   System.out.println(":(    "+"i "+i+"bowCounter "+bowCounter+"counter "+counter);
-//               }
-//
-//
-//           }
-//           counter++;
-//
-//            try {
-//                //delay 1,000 = 1sec
-//                Thread.sleep(30);        //devide 1000 in the number and you will get how many time the loop would work in a second    -   frame rate
-//            }
-//            catch (java.lang.InterruptedException interrupt) {
-//                break;
-//            }
-//
-//           bowCounter++;
-//
-//
-//           /****SEND TO LED START***/
-//           for(int i=0; i<colors.length; i++) {
-//               colorsRGB[i] = colors[i].toRGBColor();
-//           }
-//           //System.out.println("ssss");
-//
-//           //Send to leds (beaglebone)
-//           System.gc();
-//           network.addSegment("test", colorsRGB, 0, 0);
-//
-//           network.send();
-//           /***END****/
-//
-//       }
-////---END ---//
-
-        //---ONE LE SHOTING STAR CHANGING COLOR - ONLY ONE WAY---- START ---//
-       double bowCounter = 0.0;
-
-        double width = 0.0  ; //Decide on the width. if == colorsRGB.length then each the spectrum is spaces perfect.
-        width =  (width>0)? width:colorsRGB.length;
 
         Wing leftWing = new Wing();
         Wing rightWing = new Wing();
+        ChickenHead head = new ChickenHead();
 
-        ContinuousRainbowEffect rainbow = new ContinuousRainbowEffect(new ContinuousWhiteEffect());
-        ContinuousToDiscrete continuousToDiscrete = new ContinuousToDiscrete(240, rainbow);
+        TimeChangingSections timedHueAnimation = new TimeChangingSections(head, leftWing, rightWing);
+        Rainbow rainbow = new Rainbow(head, leftWing, rightWing);
+        Confetti confetti = new Confetti(head, leftWing, rightWing);
+
 
         // yellow
         DiscreteConstColorEffect constYellow = new DiscreteConstColorEffect(240);
@@ -113,12 +24,9 @@ public class SweatLodge {
         constRed.configure(HSBColor.RED);
 
         // alternate
-        DiscreteAlternateEffect alternateRedYellow = new DiscreteAlternateEffect(240, constRed, constYellow);
-        DiscreteSpikeEffect spike = new DiscreteSpikeEffect(240, continuousToDiscrete);
-        spike.configure(0, 1.3, 0.3);
-
-        EffectToObjectMapper mapperLeft = new EffectToObjectMapper(spike, leftWing.GetAllPixels(), leftWing.allIndexes);
-        EffectToObjectMapper mapperRight = new EffectToObjectMapper(spike, rightWing.GetAllPixels(), rightWing.allIndexes);
+//        DiscreteAlternateEffect alternateRedYellow = new DiscreteAlternateEffect(240, constRed, constYellow);
+//        DiscreteSpikeEffect spike = new DiscreteSpikeEffect(240, continuousToDiscreteWing);
+//        spike.configure(0, 1.3, 0.3);
 
 //int legGroupSize = 5;
 //       int counter = 0;
@@ -126,12 +34,15 @@ public class SweatLodge {
 
            double timePercent = (System.currentTimeMillis() % 5000) / 5000.0;
 
-           mapperLeft.apply(timePercent);
-           mapperRight.apply(timePercent);
+           //timedHueAnimation.apply(timePercent);
+           //rainbow.apply(timePercent);
+           confetti.apply(timePercent);
+
 
            //Send to leds (beaglebone)
            System.gc();
            network.addSegment("test", leftWing.GetRGBColors(0, leftWing.GetPixelsNumber()), 0, 0);
+           network.addSegment("test", head.GetRGBColors(0, head.GetPixelsNumber()), 1, 0);
            network.addSegment("test", rightWing.GetRGBColors(0, rightWing.GetPixelsNumber()), 2, 0);
 
            network.send();
@@ -144,11 +55,6 @@ public class SweatLodge {
                System.out.println(interrupt.getMessage());
                 break;
             }
-
-           bowCounter++;
-
-
-           /***END****/
 
        }
 //---END ---//

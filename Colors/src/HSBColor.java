@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class HSBColor {
 
@@ -23,6 +24,10 @@ public class HSBColor {
         rgb.g = (byte)((rgbAsInt>>8)&0xFF);
         rgb.b = (byte)((rgbAsInt>>0)&0xFF);
         return rgb;
+    }
+
+    public static HSBColor createWithRandomHue() {
+        return new HSBColor(ThreadLocalRandom.current().nextDouble(), 1.0, 1.0);
     }
 
     public int toRGBInt() {
@@ -56,6 +61,7 @@ public class HSBColor {
     }
 
     public static final HSBColor BLACK = new HSBColor(0,0,0);
+    public static final HSBColor WHITE = new HSBColor(0,0,1.0);
     public static final HSBColor RED = new HSBColor(0.0/3.0,1.0,1.0);
     public static final HSBColor GREEN = new HSBColor(1.0/3.0,1.0,1.0);
     public static final HSBColor BLUE = new HSBColor(2.0/3.0,1.0,1.0);

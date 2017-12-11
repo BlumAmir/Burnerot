@@ -12,7 +12,7 @@ public class EffectToObjectMapper {
 
     public void apply(double timePercent) {
         for(int i=0; i<this.indexes.length; i++) {
-            this.destArray[this.indexes[i]] = this.effect.getColor(timePercent, i);
+            this.destArray[this.indexes[i]].copyFromOther(this.effect.getColor(timePercent, i));
         }
     }
 

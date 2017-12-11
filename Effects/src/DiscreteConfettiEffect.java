@@ -21,6 +21,17 @@ public class DiscreteConfettiEffect extends DiscreteEffect
 
     @Override
     public HSBColor getColor(double timePercent, int index) {
+
+        // TODO: fix this code!
+        if(timePercent < lastTimePercent) {
+            for(int i=0; i<birthTime.length; i++) {
+                birthTime[i] -= 1.0;
+            }
+            this.totalShinedPixels = 0;
+            this.lastShineTime = 0.0;
+        }
+        lastTimePercent = timePercent;
+
         shine(timePercent);
         HSBColor c = e.getColor(timePercent, index);
         double timeFromBirth = timePercent - this.birthTime[index];
@@ -49,6 +60,7 @@ public class DiscreteConfettiEffect extends DiscreteEffect
         this.lastShineTime = timePercent;
     }
 
+    private double lastTimePercent;
     private double lastShineTime = 0.0;
 
     private double pixelsPercentToShine;
