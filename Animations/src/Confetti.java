@@ -1,7 +1,7 @@
 public class Confetti extends SceneAnimation {
 
-    public Confetti(ChickenHead headObject, Wing leftWing, Wing rightWing) {
-        super(headObject, leftWing, rightWing);
+    public Confetti(ChickenHead headObject, Wing leftWing, Wing rightWing, Feathers feathersObject) {
+        super(headObject, leftWing, rightWing, feathersObject);
 
         ContinuousRainbowEffect rainbow = new ContinuousRainbowEffect(new ContinuousWhiteEffect());
         ContinuousConstColorEffect whiteConst = new ContinuousConstColorEffect(HSBColor.WHITE);
@@ -21,6 +21,11 @@ public class Confetti extends SceneAnimation {
                 new DiscreteConfettiEffect(leftWing.allIndexes.length, rainbow.getAsDiscrete(leftWing.allIndexes.length)));
         rWing.addMapper(rightWing.allIndexes,
                 new DiscreteConfettiEffect(rightWing.allIndexes.length, rainbow.getAsDiscrete(rightWing.allIndexes.length)));
+
+        for(int[] feather: feathersObject.parts) {
+            feathers.addMapper(feather,
+                    new DiscreteConfettiEffect(feather.length, rainbow.getAsDiscrete(feather.length)));
+        }
     }
 
 }

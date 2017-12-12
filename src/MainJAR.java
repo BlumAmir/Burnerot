@@ -4,6 +4,7 @@ public class MainJAR {
         String soundsPath = Config.SOUNDS_FOLDER_PATH_JAR;
         boolean runSimulator = false;
 
-        SweatLodge.run();
+        SweatLodge sl = new SweatLodge();
+        sl.run();
     }
 }

@@ -1,7 +1,7 @@
 public class Rainbow extends SceneAnimation {
 
-    public Rainbow(ChickenHead headObject, Wing leftWing, Wing rightWing) {
-        super(headObject, leftWing, rightWing);
+    public Rainbow(ChickenHead headObject, Wing leftWing, Wing rightWing, Feathers feathersObject) {
+        super(headObject, leftWing, rightWing, feathersObject);
 
         ContinuousRainbowEffect rainbow = new ContinuousRainbowEffect(new ContinuousWhiteEffect());
         ContinuousCyclicMoveEffect rainbowMove = new ContinuousCyclicMoveEffect(rainbow);
@@ -17,6 +17,8 @@ public class Rainbow extends SceneAnimation {
 
         lWing.addMapper(leftWing.allIndexes, rainbowMove);
         rWing.addMapper(rightWing.allIndexes, rainbowMove);
+
+        feathers.addMapperForEachFeather(rainbowMove);
     }
 
 }

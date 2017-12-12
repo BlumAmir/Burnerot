@@ -7,6 +7,7 @@ public class MainLocal {
         }
         boolean runSimulator = false;
 
-        SweatLodge.run();
+        SweatLodge sl = new SweatLodge();
+        sl.run();
     }
 }
